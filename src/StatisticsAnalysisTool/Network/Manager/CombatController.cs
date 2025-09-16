@@ -3,6 +3,7 @@ using StatisticsAnalysisTool.Common;
 using StatisticsAnalysisTool.Common.UserSettings;
 using StatisticsAnalysisTool.DamageMeter;
 using StatisticsAnalysisTool.Enumerations;
+using StatisticsAnalysisTool.Models;
 using StatisticsAnalysisTool.Models.NetworkModel;
 using StatisticsAnalysisTool.Properties;
 using StatisticsAnalysisTool.ViewModels;
@@ -22,6 +23,7 @@ public class CombatController
 {
     private readonly MainWindowViewModel _mainWindowViewModel;
     private readonly TrackingController _trackingController;
+    private readonly List<CombatEventLogEntry> _combatEvents = new();
     private bool _combatModeWasCombatOver;
 
     public CombatController(TrackingController trackingController, MainWindowViewModel mainWindowViewModel)
@@ -55,13 +57,30 @@ public class CombatController
         var causerGameObjectValue = causerGameObject?.Value;
 
         var affectedGameObject = _trackingController.EntityController?.GetEntity(affectedId);
+        var affectedGameObjectValue = affectedGameObject?.Value;
 
-        if (_mainWindowViewModel.DamageMeterBindings.OnlyDamageToPlayersCounts && affectedGameObject?.Value is not { ObjectType: GameObjectType.Player })
+        var loggedHealthChange = healthChangeType == HealthChangeType.Damage
+            ? healthChange.ToPositiveFromNegativeOrZero()
+            : healthChange;
+
+        _combatEvents.Add(new CombatEventLogEntry
+        {
+            CauserName = causerGameObjectValue?.Name ?? string.Empty,
+            CauserGuild = causerGameObjectValue?.Guild ?? string.Empty,
+            AffectedName = affectedGameObjectValue?.Name ?? string.Empty,
+            AffectedGuild = affectedGameObjectValue?.Guild ?? string.Empty,
+            HealthChangeType = healthChangeType,
+            HealthChange = loggedHealthChange,
+            NewHealthValue = newHealthValue,
+            SpellIndex = causingSpellIndex
+        });
+
+        if (_mainWindowViewModel.DamageMeterBindings.OnlyDamageToPlayersCounts && affectedGameObjectValue is not { ObjectType: GameObjectType.Player })
         {
             return Task.CompletedTask;
         }
 
-        if (causerGameObject?.Value is not { ObjectType: GameObjectType.Player } || !_trackingController.EntityController!.IsEntityInParty(causerGameObject.Value.Key))
+        if (causerGameObjectValue is not { ObjectType: GameObjectType.Player } || !_trackingController.EntityController!.IsEntityInParty(causerGameObject.Value.Key))
         {
             return Task.CompletedTask;
         }
@@ -375,6 +394,7 @@ public class CombatController
 
     public void ResetDamageMeter()
     {
+        _combatEvents.Clear();
         _trackingController.EntityController.ResetEntitiesDamageTimes();
         _trackingController.EntityController.ResetEntitiesDamage();
         _trackingController.EntityController.ResetEntitiesHeal();
@@ -387,6 +407,21 @@ public class CombatController
         {
             _mainWindowViewModel?.DamageMeterBindings?.DamageMeter?.Clear();
         });
+    }
+
+    public string GetCombatEventsAsCsv()
+    {
+        try
+        {
+            const string csvHeader = "timestamp_utc;causer_guild;causer_name;affected_guild;affected_name;health_change_type;health_change;new_health_value;spell_index\n";
+            return csvHeader + string.Join(Environment.NewLine, _combatEvents.Select(entry => entry.CsvOutput).ToArray());
+        }
+        catch (Exception e)
+        {
+            DebugConsole.WriteError(MethodBase.GetCurrentMethod()?.DeclaringType, e);
+            Log.Error(e, "{message}", MethodBase.GetCurrentMethod()?.DeclaringType);
+            return string.Empty;
+        }
     }
 
     public ConcurrentDictionary<Guid, double> LastPlayersHealth = new();
