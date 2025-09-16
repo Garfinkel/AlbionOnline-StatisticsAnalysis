@@ -21067,6 +21067,55 @@
       ]
     },
     {
+      "tuid": "EXPORT_COMBAT_LOG_TO_CSV",
+      "tuv": [
+        {
+          "lang": "de-DE",
+          "seg": "Kampfprotokoll als CSV exportieren"
+        },
+        {
+          "lang": "en-US",
+          "seg": "Export combat log to CSV"
+        },
+        {
+          "lang": "es-ES",
+          "seg": "Exportar registro de combate a CSV"
+        },
+        {
+          "lang": "fr-FR",
+          "seg": "Exporter le journal de combat en CSV"
+        },
+        {
+          "lang": "ja-JP",
+          "seg": "戦闘ログをCSVにエクスポート"
+        },
+        {
+          "lang": "ko-KR",
+          "seg": "전투 로그를 CSV로 내보내기"
+        },
+        {
+          "lang": "pl-PL",
+          "seg": "Eksportuj dziennik walk do CSV"
+        },
+        {
+          "lang": "pt-BR",
+          "seg": "Exportar registro de combate para CSV"
+        },
+        {
+          "lang": "ru-RU",
+          "seg": "Экспорт боевого лога в CSV"
+        },
+        {
+          "lang": "zh-CN",
+          "seg": "将战斗日志导出为CSV"
+        },
+        {
+          "lang": "zh-TW",
+          "seg": "將戰鬥日誌匯出為CSV"
+        }
+      ]
+    },
+    {
       "tuid": "TRACK_PARTY_LOOT_ONLY",
       "tuv": [
         {

@@ -396,6 +396,30 @@ public class MainWindowViewModel : BaseViewModel
         }
     }
 
+    public void ExportCombatLogToFile()
+    {
+        var dialog = new SaveFileDialog
+        {
+            FileName = $"combat-log-{DateTime.UtcNow:yyyy-MM-dd-hh-mm-ss}utc",
+            DefaultExt = ".csv",
+            Filter = "CSV documents (.csv)|*.csv"
+        };
+
+        var result = dialog.ShowDialog();
+        if (result == true)
+        {
+            try
+            {
+                var trackingController = ServiceLocator.Resolve<TrackingController>();
+                File.WriteAllText(dialog.FileName, trackingController?.CombatController?.GetCombatEventsAsCsv());
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "{message}", MethodBase.GetCurrentMethod()?.DeclaringType);
+            }
+        }
+    }
+
     #endregion
 
     #region Item View Filters
