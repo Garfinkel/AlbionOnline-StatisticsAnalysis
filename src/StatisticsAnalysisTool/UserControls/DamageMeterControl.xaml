@@ -94,17 +94,21 @@
                                         Margin="0" Width="auto" VerticalAlignment="Top" Click="BtnDamageMeterReset_Click" />
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,0">
-                                            <Grid Height="20" Width="20" Margin="5,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" 
-                                                  ToolTip="{Binding Translation.OpenExtendedDamageMeterWindow, FallbackValue=OPEN__EXTENDED__DAMAGE__METER__WINDOW}" 
+                                            <Grid Height="20" Width="20" Margin="5,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                  ToolTip="{Binding Translation.OpenExtendedDamageMeterWindow, FallbackValue=OPEN__EXTENDED__DAMAGE__METER__WINDOW}"
                                                   MouseUp="OpenDamageMeterWindow_MouseUp">
                                                 <fa5:ImageAwesome Icon="Solid_Expand" Foreground="{StaticResource SolidColorBrush.Text.1}" />
                                             </Grid>
-                                            <Grid Height="20" Width="20" Margin="5,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" 
+                                            <Grid Height="20" Width="20" Margin="5,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center"
                                                   ToolTip="{Binding Translation.CopyToClipboard, FallbackValue=COPY__TO__CLIPBOARD}" MouseUp="CopyDamageMeterToClipboard_MouseUp">
                                                 <fa5:ImageAwesome Icon="Regular_Copy" Foreground="{StaticResource SolidColorBrush.Text.1}" />
                                             </Grid>
-                                            <Grid Height="20" Width="20" Margin="5,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" 
-                                                  ToolTip="{Binding DamageMeterBindings.TranslationTakeASnapshotOfDamageMeterDescription, FallbackValue=TAKE_A_SNAPSHOT_OF_DAMAGE_METER}" 
+                                            <Grid Height="20" Width="20" Margin="5,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                  ToolTip="{Binding Translation.ExportCombatLogToFile, FallbackValue=EXPORT__COMBAT__LOG__TO__FILE}" MouseUp="BtnExportCombatToCsv_MouseUp">
+                                                <fa5:ImageAwesome Icon="Solid_FileCsv" Foreground="{StaticResource SolidColorBrush.Accent.Green.4}" />
+                                            </Grid>
+                                            <Grid Height="20" Width="20" Margin="5,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                  ToolTip="{Binding DamageMeterBindings.TranslationTakeASnapshotOfDamageMeterDescription, FallbackValue=TAKE_A_SNAPSHOT_OF_DAMAGE_METER}"
                                                   MouseUp="TakeASnapShot_MouseUp">
                                                 <fa5:ImageAwesome Icon="Solid_Camera" Foreground="{StaticResource SolidColorBrush.Text.1}" />
                                             </Grid>

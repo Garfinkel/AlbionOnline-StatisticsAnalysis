@@ -168,6 +168,12 @@ public partial class DamageMeterControl
         CopyDamageMeterToClipboard();
     }
 
+    private void BtnExportCombatToCsv_MouseUp(object sender, MouseButtonEventArgs e)
+    {
+        var mainWindowViewModel = ServiceLocator.Resolve<MainWindowViewModel>();
+        mainWindowViewModel?.ExportCombatLogToFile();
+    }
+
     private void CopyDamageMeterSnapshotToClipboard_MouseUp(object sender, MouseButtonEventArgs e)
     {
         CopyDamageMeterToClipboard(true);

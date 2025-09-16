@@ -29,7 +29,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
@@ -394,6 +396,110 @@ public class MainWindowViewModel : BaseViewModel
                 Log.Error(e, "{message}", MethodBase.GetCurrentMethod()?.DeclaringType);
             }
         }
+    }
+
+    public void ExportCombatLogToFile()
+    {
+        if (!(DamageMeterBindings?.DamageMeter?.Any() ?? false))
+        {
+            return;
+        }
+
+        var dialog = new SaveFileDialog
+        {
+            FileName = $"combat-log-{DateTime.UtcNow:yyyy-MM-dd-HH-mm-ss}utc",
+            DefaultExt = ".csv",
+            Filter = "CSV documents (.csv)|*.csv"
+        };
+
+        var result = dialog.ShowDialog();
+        if (result == true)
+        {
+            try
+            {
+                var fragments = DamageMeterBindings.DamageMeter.ToList();
+                var csvContent = BuildCombatLogCsv(fragments);
+
+                if (!string.IsNullOrWhiteSpace(csvContent))
+                {
+                    File.WriteAllText(dialog.FileName, csvContent);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "{message}", MethodBase.GetCurrentMethod()?.DeclaringType);
+            }
+        }
+    }
+
+    private static string BuildCombatLogCsv(IEnumerable<DamageMeterFragment> fragments)
+    {
+        if (fragments == null)
+        {
+            return string.Empty;
+        }
+
+        var builder = new StringBuilder();
+        builder.AppendLine("Name;Damage;Damage %;DPS;Heal;Heal %;HPS;Overhealed;Overhealed %;Taken Damage;Taken Damage %;Combat Time");
+
+        foreach (var fragment in fragments)
+        {
+            if (fragment == null)
+            {
+                continue;
+            }
+
+            var line = string.Join(';', new[]
+            {
+                EscapeCsvValue(fragment.Name),
+                fragment.Damage.ToString(CultureInfo.InvariantCulture),
+                FormatDouble(fragment.DamagePercentage),
+                FormatDouble(fragment.Dps),
+                fragment.Heal.ToString(CultureInfo.InvariantCulture),
+                FormatDouble(fragment.HealPercentage),
+                FormatDouble(fragment.Hps),
+                FormatDouble(fragment.Overhealed),
+                FormatDouble(fragment.OverhealedPercentageOfTotalHealing),
+                fragment.TakenDamage.ToString(CultureInfo.InvariantCulture),
+                FormatDouble(fragment.TakenDamagePercentage),
+                EscapeCsvValue(FormatCombatTime(fragment.CombatTime))
+            });
+
+            builder.AppendLine(line);
+        }
+
+        return builder.ToString();
+    }
+
+    private static string FormatCombatTime(TimeSpan combatTime)
+    {
+        var totalHours = (int) Math.Floor(combatTime.TotalHours);
+        return $"{totalHours:00}:{combatTime.Minutes:00}:{combatTime.Seconds:00}";
+    }
+
+    private static string EscapeCsvValue(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return string.Empty;
+        }
+
+        if (value.Contains(';') || value.Contains('"') || value.Contains('\n') || value.Contains('\r'))
+        {
+            return $"\"{value.Replace("\"", "\"\"")}\"";
+        }
+
+        return value;
+    }
+
+    private static string FormatDouble(double value, string format = "F2")
+    {
+        if (double.IsNaN(value) || double.IsInfinity(value))
+        {
+            value = 0;
+        }
+
+        return value.ToString(format, CultureInfo.InvariantCulture);
     }
 
     #endregion

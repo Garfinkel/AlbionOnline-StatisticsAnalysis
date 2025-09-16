@@ -63,6 +63,7 @@ public class MainWindowTranslation
     public static string ResetTodaysDungeons => LocalizationController.Translation("RESET_TODAYS_DUNGEONS");
     public static string SeasonPoints => LocalizationController.Translation("SEASON_POINTS");
     public static string ExportLootToFile => LocalizationController.Translation("EXPORT_LOOT_TO_FILE");
+    public static string ExportCombatLogToFile => LocalizationController.Translation("EXPORT_COMBAT_LOG_TO_FILE");
     public static string TrackPartyLootOnly => LocalizationController.Translation("TRACK_PARTY_LOOT_ONLY");
     public static string TrackingSilver => LocalizationController.Translation("TRACKING_SILVER");
     public static string TrackingFame => LocalizationController.Translation("TRACKING_FAME");
